@@ -65,8 +65,8 @@ export default function FileUpload({ onFilesUploaded }: FileUploadProps) {
     }
 
     // Show errors for invalid files
-    invalidFiles.forEach(({ file, error }) => {
-      error(`File ${file.name} tidak valid`, error)
+    invalidFiles.forEach(({ file, error: errorMessage }) => {
+      error(`File ${file.name} tidak valid`, errorMessage)
     })
 
     if (validFiles.length === 0) {
@@ -104,8 +104,8 @@ export default function FileUpload({ onFilesUploaded }: FileUploadProps) {
             return newProgress
           })
         }, 1000)
-      } catch (error) {
-        console.error(`Error uploading ${file.name}:`, error)
+      } catch (uploadError) {
+        console.error(`Error uploading ${file.name}:`, uploadError)
         error(`Gagal mengupload ${file.name}`, 'Silakan coba lagi')
       }
     }
