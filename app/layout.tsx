@@ -2,12 +2,14 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import { AuthProvider } from '@/contexts/AuthContext'
+import App from '@/components/App'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'GEO FLOW - File Upload',
-  description: 'Aplikasi upload file peta, PDF, dan screenshot',
+  title: 'Aplikasi Verifikasi Dokumen',
+  description: 'Sistem manajemen verifikasi dan kompilasi dokumen gambar',
 }
 
 export default function RootLayout({
@@ -19,9 +21,9 @@ export default function RootLayout({
     <html lang="id">
       <body className={inter.className}>
         <ErrorBoundary>
-          <div className="min-h-screen bg-gray-50">
-            {children}
-          </div>
+          <AuthProvider>
+            <App />
+          </AuthProvider>
         </ErrorBoundary>
       </body>
     </html>
