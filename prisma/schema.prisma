@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      UserRole
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  uploadedPackages Package[] @relation("UploaderPackages")
+  verifiedPackages Package[] @relation("VerifierPackages")
+
+  @@map("users")
+}
+
+model Package {
+  id          String        @id @default(cuid())
+  title       String?
+  description String?
+  status      PackageStatus @default(PENDING_VERIFICATION)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  // Relations
+  uploaderId String
+  uploader   User   @relation("UploaderPackages", fields: [uploaderId], references: [id])
+  
+  verifierId String?
+  verifier   User?  @relation("VerifierPackages", fields: [verifierId], references: [id])
+
+  images     Image[]
+  document   Document?
+
+  @@map("packages")
+}
+
+model Image {
+  id          String      @id @default(cuid())
+  filename    String
+  originalName String
+  filePath    String
+  fileSize    Int
+  mimeType    String
+  isVerified  Boolean     @default(false)
+  verificationStatus VerificationStatus @default(PENDING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  packageId String
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@map("images")
+}
+
+model Document {
+  id          String   @id @default(cuid())
+  title       String
+  filePath    String
+  fileSize    Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  packageId String  @unique
+  package   Package @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+enum UserRole {
+  ADMIN
+  UPLOADER
+  VERIFIER
+}
+
+enum PackageStatus {
+  PENDING_VERIFICATION
+  VERIFIED
+  REJECTED
+  COMPILED
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

@@ -1,103 +1,226 @@
-# GEO FLOW - File Upload Application
+# Aplikasi Verifikasi dan Kompilasi Dokumen Gambar
 
-Aplikasi modern untuk upload file peta, PDF, dan screenshot dengan antarmuka yang user-friendly.
+Aplikasi web internal untuk menyederhanakan dan melacak proses pengunggahan, verifikasi, dan kompilasi gambar menjadi satu dokumen yang siap diunduh atau dicetak.
 
-## Fitur
+## Fitur Utama
 
-- 🗺️ **Upload Peta** - Upload file gambar peta dengan preview
-- 📄 **Upload PDF** - Upload dokumen PDF dengan ikon yang sesuai
-- 📸 **Upload Screenshot** - Upload screenshot dengan preview gambar
-- 🎨 **UI Modern** - Antarmuka yang clean dan responsive menggunakan Tailwind CSS
-- 📱 **Responsive** - Bekerja dengan baik di desktop dan mobile
-- ⚡ **Real-time Progress** - Indikator progress saat upload
-- 🔄 **Drag & Drop** - Upload file dengan drag and drop
-- 👁️ **Preview** - Preview file sebelum dan sesudah upload
-- 💾 **Download** - Download file yang sudah diupload
-- 🗑️ **Delete** - Hapus file yang tidak diperlukan
+### 🔐 Sistem Autentikasi & Role-Based Access Control
+- **Admin**: Mengelola pengguna dan memantau semua aktivitas
+- **Uploader**: Mengunggah gambar dan melihat riwayat upload
+- **Verifikator**: Memverifikasi gambar dan membuat dokumen kompilasi
 
-## Teknologi
+### 📤 Modul Upload Gambar
+- Upload multiple gambar sekaligus
+- Pengelompokan gambar menjadi paket
+- Validasi file (ukuran, tipe)
+- Preview gambar sebelum upload
+
+### ✅ Modul Verifikasi
+- Dashboard paket menunggu verifikasi
+- Image viewer dengan zoom functionality
+- Verifikasi per gambar (Sesuai/Tidak Sesuai)
+- Status tracking real-time
+
+### 📄 Modul Kompilasi Dokumen
+- Pilih gambar yang telah disetujui
+- Generate PDF otomatis
+- Download dokumen kompilasi
+- Print functionality
+
+## Teknologi yang Digunakan
 
 - **Frontend**: Next.js 14, React 18, TypeScript
 - **Styling**: Tailwind CSS
-- **Icons**: Lucide React
+- **Database**: SQLite dengan Prisma ORM
+- **Authentication**: NextAuth.js
 - **File Upload**: React Dropzone
-- **Backend**: Next.js API Routes
+- **PDF Generation**: jsPDF, html2canvas
+- **Icons**: Lucide React
 
-## Instalasi
+## Instalasi & Setup
 
-1. Install dependencies:
-```bash
-npm install
+1. **Clone repository**
+   ```bash
+   git clone <repository-url>
+   cd aplikasi-verifikasi-dokumen
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Setup database**
+   ```bash
+   npx prisma migrate dev
+   npx prisma generate
+   ```
+
+4. **Buat user admin**
+   ```bash
+   node scripts/create-admin.js
+   ```
+
+5. **Buat sample users (opsional)**
+   ```bash
+   node scripts/create-sample-users.js
+   ```
+
+6. **Jalankan aplikasi**
+   ```bash
+   npm run dev
+   ```
+
+7. **Akses aplikasi**
+   - URL: http://localhost:3000
+   - Login dengan kredensial yang telah dibuat
+
+## Kredensial Default
+
+### Admin
+- **Email**: admin@example.com
+- **Password**: admin123
+
+### Uploader (Sample)
+- **Email**: uploader@example.com
+- **Password**: uploader123
+
+### Verifikator (Sample)
+- **Email**: verifier@example.com
+- **Password**: verifier123
+
+## Struktur Aplikasi
+
+```
+├── app/                    # Next.js App Router
+│   ├── api/               # API Routes
+│   ├── auth/              # Authentication pages
+│   ├── admin/             # Admin pages
+│   ├── uploader/          # Uploader pages
+│   ├── verifier/          # Verifier pages
+│   └── dashboard/         # Dashboard
+├── components/            # React components
+│   ├── auth/             # Authentication components
+│   ├── layout/           # Layout components
+│   └── ui/               # UI components
+├── lib/                  # Utilities & configurations
+├── prisma/               # Database schema & migrations
+├── scripts/              # Database scripts
+└── types/                # TypeScript type definitions
 ```
 
-2. Jalankan development server:
-```bash
-npm run dev
-```
+## Alur Kerja (Workflow)
 
-3. Buka [http://localhost:3000](http://localhost:3000) di browser
-
-## Struktur Proyek
-
-```
-├── app/
-│   ├── api/
-│   │   ├── upload/route.ts          # API untuk upload file
-│   │   ├── files/route.ts           # API untuk list file
-│   │   └── files/[filename]/route.ts # API untuk delete file
-│   ├── uploads/[...path]/route.ts   # Static file serving
-│   ├── globals.css                  # Global styles
-│   ├── layout.tsx                   # Root layout
-│   └── page.tsx                     # Home page
-├── components/
-│   └── FileUpload.tsx               # Komponen upload utama
-├── uploads/                         # Direktori file upload
-├── package.json
-├── tailwind.config.js
-├── tsconfig.json
-└── next.config.js
-```
+1. **Admin** membuat akun untuk Uploader dan Verifikator
+2. **Uploader** login dan mengunggah gambar dalam paket
+3. **Verifikator** melihat daftar paket yang menunggu verifikasi
+4. **Verifikator** memverifikasi setiap gambar (Sesuai/Tidak Sesuai)
+5. **Verifikator** memilih gambar yang disetujui untuk dikompilasi
+6. **Sistem** generate PDF dari gambar yang dipilih
+7. **User** dapat download atau print dokumen PDF
 
 ## API Endpoints
 
-- `POST /api/upload` - Upload file
-- `GET /api/files` - List semua file
-- `DELETE /api/files/[filename]` - Hapus file
-- `GET /uploads/[filename]` - Serve static file
+### Authentication
+- `POST /api/auth/signin` - User login
+- `POST /api/auth/signout` - User logout
 
-## Penggunaan
+### Admin
+- `GET /api/admin/users` - Get all users
+- `POST /api/admin/users` - Create user
+- `PUT /api/admin/users/[id]` - Update user
+- `DELETE /api/admin/users/[id]` - Delete user
 
-1. **Upload File**: Drag & drop file ke area upload atau klik untuk memilih file
-2. **Preview**: File gambar akan ditampilkan preview-nya
-3. **Download**: Klik tombol download untuk mengunduh file
-4. **Hapus**: Klik tombol X untuk menghapus file
-5. **Lihat**: Klik tombol "Lihat" untuk membuka file di tab baru
+### Packages
+- `GET /api/packages` - Get packages (filtered by role)
+- `POST /api/packages` - Create package
+- `GET /api/packages/[id]` - Get package detail
+- `PUT /api/packages/[id]` - Update package
+- `DELETE /api/packages/[id]` - Delete package
 
-## Batasan File
+### Verification
+- `POST /api/packages/[id]/verify` - Verify package images
 
-- Maksimal ukuran file: 10MB
-- Format yang didukung: PNG, JPG, JPEG, GIF, WebP, PDF
-- Maksimal 10 file per upload
+### Compilation
+- `POST /api/packages/[id]/compile` - Compile package to PDF
 
-## Development
+## Konfigurasi
 
-```bash
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Run linting
-npm run lint
+### Environment Variables
+```env
+DATABASE_URL="file:./dev.db"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your-secret-key-here"
+NEXT_PUBLIC_MAX_FILE_SIZE="10485760"
+NEXT_PUBLIC_ALLOWED_FILE_TYPES="image/*,application/pdf"
 ```
+
+### File Upload Configuration
+- **Max file size**: 10MB per file
+- **Max files**: 20 files per package
+- **Allowed types**: PNG, JPG, JPEG, GIF, WEBP
+
+## Database Schema
+
+### Users
+- `id`, `email`, `name`, `password`, `role`, `createdAt`, `updatedAt`
+
+### Packages
+- `id`, `title`, `description`, `status`, `uploaderId`, `verifierId`, `createdAt`, `updatedAt`
+
+### Images
+- `id`, `filename`, `originalName`, `filePath`, `fileSize`, `mimeType`, `isVerified`, `verificationStatus`, `packageId`
+
+### Documents
+- `id`, `title`, `filePath`, `fileSize`, `packageId`, `createdAt`, `updatedAt`
+
+## Deployment
+
+### Production Build
+```bash
+npm run build
+npm start
+```
+
+### Environment Setup
+1. Set production environment variables
+2. Configure database (PostgreSQL recommended)
+3. Set up file storage (AWS S3, Cloudinary, etc.)
+4. Configure NextAuth secret
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Database connection error**
+   - Check DATABASE_URL in .env
+   - Run `npx prisma migrate dev`
+
+2. **File upload fails**
+   - Check uploads directory permissions
+   - Verify file size limits
+
+3. **PDF generation error**
+   - Ensure all images are accessible
+   - Check file permissions
+
+### Logs
+- Check browser console for client-side errors
+- Check server logs for API errors
+- Use Prisma Studio for database inspection
+
+## Kontribusi
+
+1. Fork repository
+2. Create feature branch
+3. Commit changes
+4. Push to branch
+5. Create Pull Request
 
 ## Lisensi
 
-MIT License
+MIT License - lihat file LICENSE untuk detail.
+
+## Support
+
+Untuk pertanyaan atau bantuan, silakan buat issue di repository atau hubungi tim development.

@@ -1,22 +1,49 @@
 'use client'
 
-import FileUpload from '@/components/FileUpload'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
+import { Loader2 } from 'lucide-react'
 
 export default function Home() {
-  return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          GEO FLOW
-        </h1>
-        <p className="text-xl text-gray-600">
-          Upload Peta, PDF, atau Screenshot
-        </p>
-      </div>
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
-      {/* File Upload Component */}
-      <FileUpload />
+  useEffect(() => {
+    if (status === 'loading') return
+
+    if (!session) {
+      router.push('/auth/signin')
+      return
+    }
+
+    // Redirect based on user role
+    switch (session.user.role) {
+      case 'ADMIN':
+        router.push('/admin/users')
+        break
+      case 'UPLOADER':
+        router.push('/uploader/upload')
+        break
+      case 'VERIFIER':
+        router.push('/verifier/packages')
+        break
+      default:
+        router.push('/dashboard')
+    }
+  }, [session, status, router])
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
     </div>
   )
 }
