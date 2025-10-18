@@ -6,8 +6,8 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'GEO FLOW - File Upload',
-  description: 'Aplikasi upload file peta, PDF, dan screenshot',
+  title: 'Sistem Verifikasi & Kompilasi Dokumen',
+  description: 'Platform internal untuk mengelola pengunggahan, verifikasi, dan kompilasi gambar menjadi dokumen yang siap diunduh atau dicetak',
 }
 
 export default function RootLayout({
